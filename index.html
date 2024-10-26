@@ -20,15 +20,15 @@
       min-height: 100vh;
     }
     .container {
-      max-width: 800px;
-      padding: 40px;
+      max-width: 100%;
+      padding: 20px;
       background-color: #ffffff;
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
     h1 {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       font-weight: 700;
       color: #3a4ca8;
     }
@@ -44,6 +44,7 @@
       color: #174ea6;
       margin-top: 20px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
     }
     button {
       width: 100%;
@@ -69,30 +70,35 @@
       margin-bottom: 20px;
     }
     .form-group {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-    table {
-      width: 100%;
-      margin-top: 30px;
-      border-collapse: collapse;
-      font-size: 1rem;
-    }
-    table, th, td {
+    .price-item {
+      margin-top: 15px;
+      padding: 10px;
       border: 1px solid #dee2e6;
-    }
-    th, td {
-      padding: 15px;
-      text-align: center;
-    }
-    th {
+      border-radius: 8px;
       background-color: #f8f9fa;
-      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
-    .fa-check-circle {
-      color: #28a745;
+    .price-item p {
+      margin: 0;
+      font-weight: 500;
     }
-    .form-check {
-      margin-bottom: 10px;
+    @media (max-width: 576px) {
+      .container {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+      button {
+        padding: 10px;
+        font-size: 1rem;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
     }
   </style>
 </head>
@@ -223,7 +229,6 @@
 
       let totalPrice = 0;
       let priceBreakup = "<strong>Price Breakdown:</strong><br>";
-      priceBreakup += "<table><thead><tr><th>Billable Item</th><th>Included</th><th>Additional</th><th>Unit Price (₹)</th><th>Total Cost (₹)</th></tr></thead><tbody>";
 
       // AI Phone Calling Cost
       if (aiPhoneCallingSelected) {
@@ -236,7 +241,7 @@
           callCost = additionalMinutes * unitPrice;
           totalPrice += callCost;
         }
-        priceBreakup += `<tr><td>AI Phone Platform Cost</td><td>${pricingData.aiPhoneIncludedMinutes} mins</td><td>${additionalMinutes} mins</td><td>₹${unitPrice.toFixed(2)}</td><td>₹${(pricingData.aiPhonePlatformCost + callCost).toFixed(2)}</td></tr>`;
+        priceBreakup += `<div class="price-item"><p>AI Phone Platform Cost: ₹${pricingData.aiPhonePlatformCost.toFixed(2)}</p><p>Included Minutes: ${pricingData.aiPhoneIncludedMinutes} mins</p><p>Additional Minutes: ${additionalMinutes} mins</p><p>Unit Price: ₹${unitPrice.toFixed(2)}</p><p>Total Cost: ₹${(pricingData.aiPhonePlatformCost + callCost).toFixed(2)}</p></div>`;
       }
 
       // Analytics Cost
@@ -251,29 +256,27 @@
           additionalAnalyticsMinutes = analyticsMinutes - pricingData.analyticsIncludedMinutes;
           if (basicAnalyticsSelected) {
             analyticsCost += additionalAnalyticsMinutes * basicUnitPrice;
-            priceBreakup += `<tr><td>Basic Analytics</td><td>${pricingData.analyticsIncludedMinutes} mins</td><td>${additionalAnalyticsMinutes} mins</td><td>₹${basicUnitPrice.toFixed(2)}</td><td>₹${(additionalAnalyticsMinutes * basicUnitPrice).toFixed(2)}</td></tr>`;
+            priceBreakup += `<div class="price-item"><p>Basic Analytics: </p><p>Included Minutes: ${pricingData.analyticsIncludedMinutes} mins</p><p>Additional Minutes: ${additionalAnalyticsMinutes} mins</p><p>Unit Price: ₹${basicUnitPrice.toFixed(2)}</p><p>Total Cost: ₹${(additionalAnalyticsMinutes * basicUnitPrice).toFixed(2)}</p></div>`;
           }
           if (advancedAnalyticsSelected) {
             analyticsCost += additionalAnalyticsMinutes * advancedUnitPrice;
-            priceBreakup += `<tr><td>Advanced Analytics</td><td>${pricingData.analyticsIncludedMinutes} mins</td><td>${additionalAnalyticsMinutes} mins</td><td>₹${advancedUnitPrice.toFixed(2)}</td><td>₹${(additionalAnalyticsMinutes * advancedUnitPrice).toFixed(2)}</td></tr>`;
+            priceBreakup += `<div class="price-item"><p>Advanced Analytics: </p><p>Included Minutes: ${pricingData.analyticsIncludedMinutes} mins</p><p>Additional Minutes: ${additionalAnalyticsMinutes} mins</p><p>Unit Price: ₹${advancedUnitPrice.toFixed(2)}</p><p>Total Cost: ₹${(additionalAnalyticsMinutes * advancedUnitPrice).toFixed(2)}</p></div>`;
           }
           totalPrice += analyticsCost;
         } else {
-          priceBreakup += `<tr><td>Analytics Platform Cost</td><td>${pricingData.analyticsIncludedMinutes} mins</td><td>0 mins</td><td>-</td><td>₹${pricingData.analyticsPlatformCost.toFixed(2)}</td></tr>`;
+          priceBreakup += `<div class="price-item"><p>Analytics Platform Cost: ₹${pricingData.analyticsPlatformCost.toFixed(2)}</p><p>Included Minutes: ${pricingData.analyticsIncludedMinutes} mins</p><p>Additional Minutes: 0 mins</p></div>`;
         }
       }
 
-      priceBreakup += "</tbody></table>";
-
       // Implementation Fee
-      priceBreakup += `<br><strong>Implementation Fee (One Time):</strong> ₹${pricingData.implementationFee.toFixed(2)}<br>`;
+      priceBreakup += `<div class="price-item"><p><strong>Implementation Fee (One Time):</strong> ₹${pricingData.implementationFee.toFixed(2)}</p></div>`;
 
       // Apply Duration Discount
       let discountAmount = 0;
       if (committedDuration > 0) {
         discountAmount = totalPrice * pricingData.discounts[committedDuration];
         totalPrice *= (1 - pricingData.discounts[committedDuration]);
-        priceBreakup += `<br><strong>Discount (${committedDuration} Months):</strong> -₹${discountAmount.toFixed(2)}<br>`;
+        priceBreakup += `<div class="price-item"><p><strong>Discount (${committedDuration} Months):</strong> -₹${discountAmount.toFixed(2)}</p></div>`;
       }
 
       document.getElementById("price_breakup").innerHTML = priceBreakup;
