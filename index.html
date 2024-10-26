@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConvoZen AI Pricing Calculator</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f5f7;
+      color: #333;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      padding: 40px;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 700;
+      color: #3a4ca8;
+    }
+    label {
+      font-weight: 500;
+      color: #495057;
+    }
+    .result {
+      font-weight: 600;
+      background-color: #e8f0fe;
+      padding: 20px;
+      border-radius: 12px;
+      color: #174ea6;
+      margin-top: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      background-color: #3a4ca8;
+      color: #fff;
+      transition: background-color 0.3s, transform 0.2s;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #2a3c8a;
+      transform: translateY(-2px);
+    }
+    .form-check-input {
+      margin-top: 8px;
+    }
+    .form-control {
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+    table, th, td {
+      border: 1px solid #dee2e6;
+    }
+    th, td {
+      padding: 15px;
+      text-align: center;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+    .fa-check-circle {
+      color: #28a745;
+    }
+    .form-check {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1><i class="fas fa-calculator"></i> ConvoZen AI Pricing Calculator</h1>
+    <form>
+      <!-- Select Services Section -->
+      <div class="form-group">
+        <label for="services">Select ConvoZen AI Services:</label><br>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="ai_phone_calling" id="ai_phone_calling">
+          <label class="form-check-label" for="ai_phone_calling"><i class="fas fa-phone-alt"></i> Conversational AI Phone Calling</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="analytics" id="analytics">
+          <label class="form-check-label" for="analytics"><i class="fas fa-chart-line"></i> Conversational Analytics & Insights</label>
+        </div>
+      </div>
+
+      <!-- AI Phone Calling Section -->
+      <div class="form-group" id="call_section" style="display: none;">
+        <label for="call_minutes"><i class="fas fa-clock"></i> AI Phone Calling - Enter Call Volume (in Minutes):</label>
+        <input type="number" class="form-control" id="call_minutes" placeholder="Enter call volume in minutes" min="0">
+      </div>
+
+      <!-- Analytics Section -->
+      <div class="form-group" id="analytics_section" style="display: none;">
+        <label for="analytics_volume"><i class="fas fa-database"></i> Analytics - Enter Data Volume (in Minutes):</label>
+        <input type="number" class="form-control" id="analytics_volume" placeholder="Enter analytics volume in minutes" min="0">
+      </div>
+      <div class="form-group" id="analytics_services_section" style="display: none;">
+        <label for="analytics_services"><i class="fas fa-cogs"></i> Select Analytics Services:</label><br>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="basic" id="basic_analytics">
+          <label class="form-check-label" for="basic_analytics"><i class="fas fa-check-circle"></i> Basic Analytics (Transcripts + Keyword Tracking)</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="advanced" id="advanced_analytics">
+          <label class="form-check-label" for="advanced_analytics"><i class="fas fa-check-circle"></i> Advanced Analytics (AI Moments + Sentiment Analysis + Custom Reporting)</label>
+        </div>
+      </div>
+
+      <!-- Committed Usage Duration -->
+      <div class="form-group">
+        <label for="committed_duration"><i class="fas fa-calendar-alt"></i> Committed Usage Duration:</label>
+        <select class="form-control" id="committed_duration">
+          <option value="0">None</option>
+          <option value="12">12 Months (8% Discount)</option>
+          <option value="24">24 Months (16% Discount)</option>
+          <option value="36">36 Months (24% Discount)</option>
+        </select>
+      </div>
+
+      <button type="button" onclick="calculatePrice()">Calculate Price</button>
+    </form>
+
+    <div class="result" id="price_breakup"></div>
+    <div class="result" id="total_price">Total Price: ₹0.00</div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    const pricingData = {
+      aiPhonePlatformCost: 84000,
+      analyticsPlatformCost: 124000,
+      aiPhoneIncludedMinutes: 2500,
+      analyticsIncludedMinutes: 100000,
+      callCostPerMinute: {
+        "100000": 5.5,
+        "500000": 5.0,
+        "1000000": 4.0,
+        "1000001": 3.5
+      },
+      basicAnalyticsCostPerMinute: {
+        "100000": 0.42,
+        "500000": 0.38,
+        "1000000": 0.32,
+        "1000001": 0.28
+      },
+      advancedAnalyticsCostPerMinute: {
+        "100000": 0.7,
+        "500000": 0.65,
+        "1000000": 0.58,
+        "1000001": 0.5
+      },
+      implementationFee: 200000,
+      discounts: { 12: 0.08, 24: 0.16, 36: 0.24 }
+    };
+
+    function getCallCostPerMinute(minutes) {
+      if (minutes <= 100000) return pricingData.callCostPerMinute["100000"];
+      if (minutes <= 500000) return pricingData.callCostPerMinute["500000"];
+      if (minutes <= 1000000) return pricingData.callCostPerMinute["1000000"];
+      return pricingData.callCostPerMinute["1000001"];
+    }
+
+    function getAnalyticsCostPerMinute(minutes, type) {
+      if (minutes <= 100000) return pricingData[type]["100000"];
+      if (minutes <= 500000) return pricingData[type]["500000"];
+      if (minutes <= 1000000) return pricingData[type]["1000000"];
+      return pricingData[type]["1000001"];
+    }
+
+    document.getElementById("ai_phone_calling").addEventListener("change", function() {
+      document.getElementById("call_section").style.display = this.checked ? "block" : "none";
+    });
+
+    document.getElementById("analytics").addEventListener("change", function() {
+      const display = this.checked ? "block" : "none";
+      document.getElementById("analytics_section").style.display = display;
+      document.getElementById("analytics_services_section").style.display = display;
+    });
+
+    function calculatePrice() {
+      const aiPhoneCallingSelected = document.getElementById("ai_phone_calling").checked;
+      const analyticsSelected = document.getElementById("analytics").checked;
+      const callMinutes = parseInt(document.getElementById("call_minutes").value) || 0;
+      const analyticsMinutes = parseInt(document.getElementById("analytics_volume").value) || 0;
+      const basicAnalyticsSelected = document.getElementById("basic_analytics").checked;
+      const advancedAnalyticsSelected = document.getElementById("advanced_analytics").checked;
+      const committedDuration = parseInt(document.getElementById("committed_duration").value);
+
+      let totalPrice = 0;
+      let priceBreakup = "<strong>Price Breakdown:</strong><br>";
+      priceBreakup += "<table><thead><tr><th>Billable Item</th><th>Included</th><th>Additional</th><th>Unit Price (₹)</th><th>Total Cost (₹)</th></tr></thead><tbody>";
+
+      // AI Phone Calling Cost
+      if (aiPhoneCallingSelected) {
+        totalPrice += pricingData.aiPhonePlatformCost;
+        let additionalMinutes = 0;
+        let callCost = 0;
+        let unitPrice = getCallCostPerMinute(callMinutes);
+        if (callMinutes > pricingData.aiPhoneIncludedMinutes) {
+          additionalMinutes = callMinutes - pricingData.aiPhoneIncludedMinutes;
+          callCost = additionalMinutes * unitPrice;
+          totalPrice += callCost;
+        }
+        priceBreakup += `<tr><td>AI Phone Platform Cost</td><td>${pricingData.aiPhoneIncludedMinutes} mins</td><td>${additionalMinutes} mins</td><td>₹${unitPrice.toFixed(2)}</td><td>₹${(pricingData.aiPhonePlatformCost + callCost).toFixed(2)}</td></tr>`;
+      }
+
+      // Analytics Cost
+      if (analyticsSelected) {
+        totalPrice += pricingData.analyticsPlatformCost;
+        let additionalAnalyticsMinutes = 0;
+        let analyticsCost = 0;
+        let basicUnitPrice = getAnalyticsCostPerMinute(analyticsMinutes, "basicAnalyticsCostPerMinute");
+        let advancedUnitPrice = getAnalyticsCostPerMinute(analyticsMinutes, "advancedAnalyticsCostPerMinute");
+
+        if (analyticsMinutes > pricingData.analyticsIncludedMinutes) {
+          additionalAnalyticsMinutes = analyticsMinutes - pricingData.analyticsIncludedMinutes;
+          if (basicAnalyticsSelected) {
+            analyticsCost += additionalAnalyticsMinutes * basicUnitPrice;
+            priceBreakup += `<tr><td>Basic Analytics</td><td>${pricingData.analyticsIncludedMinutes} mins</td><td>${additionalAnalyticsMinutes} mins</td><td>₹${basicUnitPrice.toFixed(2)}</td><td>₹${(additionalAnalyticsMinutes * basicUnitPrice).toFixed(2)}</td></tr>`;
+          }
+          if (advancedAnalyticsSelected) {
+            analyticsCost += additionalAnalyticsMinutes * advancedUnitPrice;
+            priceBreakup += `<tr><td>Advanced Analytics</td><td>${pricingData.analyticsIncludedMinutes} mins</td><td>${additionalAnalyticsMinutes} mins</td><td>₹${advancedUnitPrice.toFixed(2)}</td><td>₹${(additionalAnalyticsMinutes * advancedUnitPrice).toFixed(2)}</td></tr>`;
+          }
+          totalPrice += analyticsCost;
+        } else {
+          priceBreakup += `<tr><td>Analytics Platform Cost</td><td>${pricingData.analyticsIncludedMinutes} mins</td><td>0 mins</td><td>-</td><td>₹${pricingData.analyticsPlatformCost.toFixed(2)}</td></tr>`;
+        }
+      }
+
+      priceBreakup += "</tbody></table>";
+
+      // Implementation Fee
+      priceBreakup += `<br><strong>Implementation Fee (One Time):</strong> ₹${pricingData.implementationFee.toFixed(2)}<br>`;
+
+      // Apply Duration Discount
+      let discountAmount = 0;
+      if (committedDuration > 0) {
+        discountAmount = totalPrice * pricingData.discounts[committedDuration];
+        totalPrice *= (1 - pricingData.discounts[committedDuration]);
+        priceBreakup += `<br><strong>Discount (${committedDuration} Months):</strong> -₹${discountAmount.toFixed(2)}<br>`;
+      }
+
+      document.getElementById("price_breakup").innerHTML = priceBreakup;
+      document.getElementById("total_price").innerText = `Total Price (excluding Implementation Fee): ₹${totalPrice.toFixed(2)}`;
+    }
+  </script>
+
+</body>
+</html>
